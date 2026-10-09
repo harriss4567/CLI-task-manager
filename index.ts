@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { addTask, listTasks } from "./task";
+import { addTask, completeTask, deleteTask, listTasks } from "./task";
 
 export { TASKS_FILE, Task } from "./task";
 
@@ -35,12 +35,30 @@ function handleList(args: string[]): void {
   console.log(formatTable(["ID", "Title", "Status"], rows));
 }
 
+function parseId(args: string[], command: string): number {
+  const raw = args[0];
+  if (raw === undefined) {
+    throw new Error(`Missing task ID. Usage: task ${command} <id>`);
+  }
+  const id = Number(raw);
+  if (!/^\d+$/.test(raw) || id <= 0) {
+    throw new Error(`Invalid task ID "${raw}". IDs are positive whole numbers.`);
+  }
+  return id;
+}
+
 function handleComplete(args: string[]): void {
-  console.log("complete is not implemented yet");
+  const { task, alreadyDone } = completeTask(parseId(args, "complete"));
+  if (alreadyDone) {
+    console.log(`Task #${task.id} is already complete.`);
+    return;
+  }
+  console.log(`Completed task #${task.id}: ${task.title}`);
 }
 
 function handleDelete(args: string[]): void {
-  console.log("delete is not implemented yet");
+  const task = deleteTask(parseId(args, "delete"));
+  console.log(`Deleted task #${task.id}: ${task.title}`);
 }
 
 const commands: Record<string, CommandHandler> = {
