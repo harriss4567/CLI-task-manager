@@ -9,5 +9,5 @@
     "rootDir": ".",
     "outDir": "dist"
   },
-  "include": ["index.ts"]
+  "include": ["index.ts", "task.ts"]
 }

@@ -1,24 +1,38 @@
 #!/usr/bin/env node
-import path from "path";
+import { addTask, listTasks } from "./task";
 
-// Storage location for tasks. Never deleted on startup.
-export const TASKS_FILE = path.join(__dirname, "tasks.json");
-
-export interface Task {
-  id: number;
-  title: string;
-  completed: boolean;
-  createdAt: string;
-}
+export { TASKS_FILE, Task } from "./task";
 
 type CommandHandler = (args: string[]) => void;
 
 function handleAdd(args: string[]): void {
-  console.log("add is not implemented yet");
+  const title = args.join(" ");
+  if (!title.trim()) {
+    throw new Error('Missing task title. Usage: task add <title>');
+  }
+  const task = addTask(title);
+  console.log(`Added task #${task.id}: ${task.title}`);
+}
+
+function formatTable(headers: string[], rows: string[][]): string {
+  const widths = headers.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
+  const formatRow = (cells: string[]) =>
+    cells.map((cell, i) => cell.padEnd(widths[i])).join("  ").trimEnd();
+  return [
+    formatRow(headers),
+    formatRow(widths.map((w) => "-".repeat(w))),
+    ...rows.map(formatRow),
+  ].join("\n");
 }
 
 function handleList(args: string[]): void {
-  console.log("list is not implemented yet");
+  const tasks = listTasks();
+  if (tasks.length === 0) {
+    console.log("No tasks yet. Use add to create one.");
+    return;
+  }
+  const rows = tasks.map((t) => [String(t.id), t.title, t.done ? "done" : "pending"]);
+  console.log(formatTable(["ID", "Title", "Status"], rows));
 }
 
 function handleComplete(args: string[]): void {
