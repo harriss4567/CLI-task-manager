@@ -1,0 +1,22 @@
+{
+  "name": "task-manager",
+  "version": "0.1.0",
+  "description": "A CLI task manager built in Node.js/TypeScript",
+  "private": true,
+  "main": "dist/index.js",
+  "bin": {
+    "task": "dist/index.js"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
